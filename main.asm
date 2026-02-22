@@ -23,13 +23,13 @@ loop:
 	li $v0, 12
 	syscall
 	
+	# Moves $v0 to $t0 to be stored for later use so $v0 can be used for other cases
+	move $t0, $v0
+	
 	# Adds a newline to after keyboard has recorded character
 	li $v0, 4
 	la $a0, nl
 	syscall
-	
-	# Moves $v0 to $t0 to be stored for later use so $v0 can be used for other cases
-	move $t0, $v0
 	
 	# Loads immediate value 4 into $v0 for system call and loads address of key_press string to
 	# to display the character key typed into the keyboard.
