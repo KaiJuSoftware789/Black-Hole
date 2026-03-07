@@ -1,16 +1,65 @@
-# Focus on movement recording and implementation for game
+# Game will flow like this:
+# 1. Player starts up game
+# 2. 3 different options pop up:
+	# - Play
+	# - Tutorial
+	# - Quit
+	
+# 3. If player chooses one, that option will start their portion of the program.
+	# - Play: start the game
+	# - Tutorial: loads steps at player's pace to teach player how to play
+	# - Quit: Quits the game with some type of system exit
 
-.include "menu.asm"
+.include "displaymenu.asm"
 .include "game.asm"
 .include "tutorial.asm"
-.include "
 
-.data choice .asciiz
+
+.data error_msg .asciiz "Invalid number. Please try again.\n"
 
 main:
-
+	# loop runs FOREVER until game quit
+	
 	# run menu when starting program
-	jal menu
+	jal displaymenu
+	
+	# record input of player's option number
+	
+	li $v0, 5
+	syscall
+	move $t0, $v0
+	
+	# go to option's program file based off option number
+	
+	beq $t0, 1, start
+	beq $t0, 2, tutorial
+	beq $t0, 3, quit
+	
+	j default_case
+	
+start:
+
+	jal game
+	j main
+
+
+tutorial:
+
+	jal tutorial
+	j main
+
+
+quit:
+	li $v0, 10
+	syscall
+
+
+default_case:
+    	li $v0, 4
+    	la $a0, error_msg
+    	syscall
+    	j main
+	
 	
 	
 
