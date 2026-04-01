@@ -6,7 +6,7 @@ menu_prompt:	.asciiz "********Black Hole********\n\t(1)Start\n\t(2)Tutorial\n\t(
 
 .text
 
-display:
+display_menu_prompt:
 
 li $v0, 4
 la $a0, menu_prompt
