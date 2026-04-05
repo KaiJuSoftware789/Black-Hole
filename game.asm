@@ -16,7 +16,7 @@ lose_announcement: .asciiz "You have lost! :("
 position_selection_prompt: .asciiz "Your turn to move.\n"
 
 
-position: .byte -1
+
 playerHighestNumber: .byte 0
 playerSum: .byte 0
 compHighestNumber: .byte 0
@@ -37,34 +37,41 @@ game:
 	li $v0, 4
 	la $a0, game_msg
 	syscall
-	
+
 	# Displays game board
 	jal displayGameBoard
 	
-	# Tells user it is their turn to select
-	li $v0, 4
-	la $a0, position_selection_prompt
-	syscall
-
-	
-	# jal getPosition
-		# Game takes in player's input by movement along the game board( w, a, s, d, respectively) 
-		# ! character will represent what current position they are selecting/hovering over.
+	jal gameLoop
 	
 	
 	
-		# Game board will take in player's selected position and put their next number to use on that position
-
-		# Computer will select a random position and fill that in with the next number to use on that position
+		
 	
 	# Once both the player and computer reach number 10 on both their numbers used, nearest numbers respective
 	# to each player are tallied up to their own sums
 
 	# Player or computer with the least sum is crowned victor of the  game.
-
-
+	
+	
+	# Restore orignal return address
+	lw   $ra, 0($sp)
+	addi $sp, $sp, 4
+	
 	jr $ra
 	
-printResults:
+gameLoop:
+	
+	
+	# Tells user it is their turn to select
+	li $v0, 4
+	la $a0, position_selection_prompt
+	syscall
+	
+	# Takes in position for player
+	jal getPosition
+	jal checkPositionValid
+	
 
+	# Computer will select a random position and fill that in with the next number to use on that position
 
+	

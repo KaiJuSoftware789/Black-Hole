@@ -15,6 +15,7 @@ gap3: .asciiz "   "
 gap4: .asciiz "  "
 gap5: .asciiz " "
 
+position: .byte -1
 
 positionBoard: .byte
 1,
@@ -51,11 +52,36 @@ getPosition:
 # Checks if position is valid
 checkPositionValid:
 
-	# If position is not "*" which is a free space, position is not valid
+	# Load given position and the board
+	lb $t0, position
+	la $t1, board
 	
-	# Position invalid msg
+	# Convert the position to index
+	addi $t0, $t0, -1
+	
+	# Align that index with the board address
+	add $t1, $t1, $t0
+	
+	# Load byte to get what is at the board address
+	lb $t2, 0($t1)
 
-printInvalidMessage:
+	# If position is "*" which is a free space, position is valid
+	li $t3, '*'
+	blt $t0, 1, positionInvalid
+    	bgt $t0, 21, positionInvalid
+	beq $t2, $t3, positionValid
+	
+	# Else, position invalid message is shown
+	jal positionInvalid
+	jal getPosition
+	j checkPositionValid 
+	
+positionValid:
+	jr $ra
+	
+placePosition:
+
+positionInvalid:
 	
 	li $v0, 4
 	la $a0, positionInvalidMsg
