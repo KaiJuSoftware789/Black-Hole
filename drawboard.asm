@@ -42,10 +42,14 @@ board: .byte
 # Gets position that player wants to put their number in
 getPosition:
 
-	li $v0, 12
+	li $v0, 5
 	syscall
 	
 	sb $v0, position
+	
+	li $v0, 4
+	la $a0, newline
+	syscall
 	
 	jr $ra
 	
@@ -55,6 +59,10 @@ checkPositionValid:
 	# Load given position and the board
 	lb $t0, position
 	la $t1, board
+	
+	# Checks if position is out of bounds
+	blt $t0, 1, positionInvalid
+    	bgt $t0, 21, positionInvalid
 	
 	# Convert the position to index
 	addi $t0, $t0, -1
@@ -67,12 +75,10 @@ checkPositionValid:
 
 	# If position is "*" which is a free space, position is valid
 	li $t3, '*'
-	blt $t0, 1, positionInvalid
-    	bgt $t0, 21, positionInvalid
 	beq $t2, $t3, positionValid
 	
 	# Else, position invalid message is shown
-	jal positionInvalid
+	j positionInvalid
 	jal getPosition
 	j checkPositionValid 
 	
@@ -193,7 +199,7 @@ displayGameBoard:
 		la $a0, space
 		syscall
 	
-		lb $a0, board+3
+		lb $a0, board+4
 		li $v0, 11
 		syscall
 	
@@ -201,7 +207,7 @@ displayGameBoard:
 		la $a0, space
 		syscall
 	
-		lb $a0, board+3
+		lb $a0, board+5
 		li $v0, 11
 		syscall
 	
@@ -235,7 +241,7 @@ displayGameBoard:
 		
 		
 		# Characters in row 4 of board
-		lb $a0, board+4
+		lb $a0, board+6
 		li $v0, 11
 		syscall
 	
@@ -243,7 +249,7 @@ displayGameBoard:
 		la $a0, space
 		syscall
 	
-		lb $a0, board+4
+		lb $a0, board+7
 		li $v0, 11
 		syscall
 	
@@ -251,7 +257,7 @@ displayGameBoard:
 		la $a0, space
 		syscall
 	
-		lb $a0, board+4
+		lb $a0, board+8
 		li $v0, 11
 		syscall
 		
@@ -259,7 +265,7 @@ displayGameBoard:
 		la $a0, space
 		syscall
 	
-		lb $a0, board+4
+		lb $a0, board+9
 		li $v0, 11
 		syscall
 		
@@ -293,7 +299,7 @@ displayGameBoard:
 		
 		
 		# Characters in row 5 of board
-		lb $a0, board+5
+		lb $a0, board+10
 		li $v0, 11
 		syscall
 	
@@ -301,7 +307,7 @@ displayGameBoard:
 		la $a0, space
 		syscall
 	
-		lb $a0, board+5
+		lb $a0, board+11
 		li $v0, 11
 		syscall
 	
@@ -309,15 +315,7 @@ displayGameBoard:
 		la $a0, space
 		syscall
 	
-		lb $a0, board+5
-		li $v0, 11
-		syscall
-		
-		li $v0, 4
-		la $a0, space
-		syscall
-	
-		lb $a0, board+5
+		lb $a0, board+12
 		li $v0, 11
 		syscall
 		
@@ -325,7 +323,15 @@ displayGameBoard:
 		la $a0, space
 		syscall
 	
-		lb $a0, board+5
+		lb $a0, board+13
+		li $v0, 11
+		syscall
+		
+		li $v0, 4
+		la $a0, space
+		syscall
+	
+		lb $a0, board+14
 		li $v0, 11
 		syscall
 		
@@ -353,7 +359,7 @@ displayGameBoard:
 		syscall
 		
 		# Characters in row 6 of board
-		lb $a0, board+6
+		lb $a0, board+15
 		li $v0, 11
 		syscall
 	
@@ -361,7 +367,7 @@ displayGameBoard:
 		la $a0, space
 		syscall
 	
-		lb $a0, board+6
+		lb $a0, board+16
 		li $v0, 11
 		syscall
 	
@@ -369,15 +375,7 @@ displayGameBoard:
 		la $a0, space
 		syscall
 	
-		lb $a0, board+6
-		li $v0, 11
-		syscall
-		
-		li $v0, 4
-		la $a0, space
-		syscall
-	
-		lb $a0, board+6
+		lb $a0, board+17
 		li $v0, 11
 		syscall
 		
@@ -385,7 +383,7 @@ displayGameBoard:
 		la $a0, space
 		syscall
 	
-		lb $a0, board+6
+		lb $a0, board+18
 		li $v0, 11
 		syscall
 		
@@ -393,7 +391,15 @@ displayGameBoard:
 		la $a0, space
 		syscall
 	
-		lb $a0, board+6
+		lb $a0, board+19
+		li $v0, 11
+		syscall
+		
+		li $v0, 4
+		la $a0, space
+		syscall
+	
+		lb $a0, board+20
 		li $v0, 11
 		syscall
 		

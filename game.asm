@@ -15,6 +15,9 @@ lose_announcement: .asciiz "You have lost! :("
 # Prompt to player
 position_selection_prompt: .asciiz "Your turn to move.\n"
 
+# Test message
+test_msg: .asciiz "Code has been passed.\n"
+
 
 
 playerHighestNumber: .byte 0
@@ -71,6 +74,11 @@ gameLoop:
 	jal getPosition
 	jal checkPositionValid
 	
+	li $v0, 4
+	la $a0, test_msg
+	syscall
+	
+	jal placePosition 
 
 	# Computer will select a random position and fill that in with the next number to use on that position
 
