@@ -2,7 +2,7 @@
 
 .data
 
-menu_prompt:	.asciiz "********Black Hole********\n\t(1)Start\n\t(2)Tutorial\n\t(3)Quit\nPress respective number to command.\n"
+menu_prompt:	.asciiz "********Black Hole********\n\t(1)Start\n\t(2)Tutorial\n\t(3)Quit\nPress respective number to command.\n\n"
 
 .text
 

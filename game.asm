@@ -3,7 +3,7 @@
 # Winner is determined by least sum amounts from the numbers players put on the black hole board
 
 .data 
-game_msg: .asciiz "You have gone to the game portion of the program"
+game_msg: .asciiz "You have gone to the game portion of the program\n\n"
 
 
 .text

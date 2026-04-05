@@ -1,5 +1,5 @@
 .data
-tutorial_msg: .asciiz "Tutorial not implemented yet. \n"
+tutorial_msg: .asciiz "Tutorial not implemented yet. \n\n"
 
 .text
 tutorial:

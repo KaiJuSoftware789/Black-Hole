@@ -14,61 +14,44 @@
 .include "game.asm"
 .include "tutorial.asm"
 
-
-.data 
+.data
 error_msg: .asciiz "Invalid number. Please try again.\n"
 
 .text
 .globl main
 
 main:
-	# loop runs FOREVER until game quit
-	
-	# run menu when starting program
-	jal display_menu_prompt
-	
-	# record input of player's option number
-	
-	# li $v0, 5
-	# syscall
-	# move $t0, $v0
-	
-	# go to option's program file based off option number
-	
-	# beq $t0, 1, start
-	# beq $t0, 2, run_tutorial
-	# beq $t0, 3, quit
-	
-	# j default_case
-	
-	li $v0, 10
-	syscall
-	
-#start:
+    jal display_menu_prompt
 
-#	jal game
-#	j main
+    li $v0, 5
+    syscall
+    move $t0, $v0
 
+    beq $t0, 1, start
+    beq $t0, 2, run_tutorial
+    beq $t0, 3, quit
+    j default_case
 
-#run_tutorial:
+start:
+    jal game
+    j main
 
-#	jal tutorial
-#	j main
+run_tutorial:
+    jal tutorial
+    j main
 
+quit:
+    li $v0, 10
+    syscall
 
-#quit:
-#	li $v0, 10
-#	syscall
-
-
-#default_case:
-#    	li $v0, 4
- #   	la $a0, error_msg
- #   	syscall
-   # 	j main
+default_case:
+    li $v0, 4
+    la $a0, error_msg
+    syscall
+    j main
 	
 	
-	
+
 
 
 
