@@ -2,8 +2,8 @@
 # Player and AI will go back and forth until the triangle of holes gets filled up numbers
 # Winner is determined by least sum amounts from the numbers players put on the black hole board
 
-.include drawboard.asm
-.include computer.asm
+.include "drawboard.asm"
+.include "computer.asm"
 
 .data
 
