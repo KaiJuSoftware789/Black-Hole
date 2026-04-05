@@ -9,14 +9,14 @@
 
 # Announcements to player
 game_msg: .asciiz "You have gone to the game portion of the program\n\n"
-win_announcement .asciiz "You claim victory!!!!! :)"
-lose_announcement .asciiz "You have lost! :("
+win_announcement: .asciiz "You claim victory!!!!! :)"
+lose_announcement: .asciiz "You have lost! :("
 
 # Prompt to player
 position_selection_prompt: .asciiz "Your turn to move.\n"
 
 
-position .byte -1
+position: .byte -1
 playerHighestNumber: .byte 0
 playerSum: .byte 0
 compHighestNumber: .byte 0
@@ -29,6 +29,9 @@ computerSum: .byte 0
 # Player gets prompted to move piece until the last number filled in is 10 for them 
 # and the bot's last number filled is 10
 game:
+	# Save original return address to stack before doing other jal calls
+	addi $sp, $sp, -4
+    	sw   $ra, 0($sp)
 
 	# Player starts game and board displays.
 	li $v0, 4
@@ -42,11 +45,9 @@ game:
 	li $v0, 4
 	la $a0, position_selection_prompt
 	syscall
-	
-	jal getPosition
 
 	
-
+	# jal getPosition
 		# Game takes in player's input by movement along the game board( w, a, s, d, respectively) 
 		# ! character will represent what current position they are selecting/hovering over.
 	
@@ -62,22 +63,6 @@ game:
 	# Player or computer with the least sum is crowned victor of the  game.
 
 
-	jr $ra
-
-
-
-# Goes through procedure of displaying board to player
-conductPlayerTurn:
-	
-	# Tells user it is their turn to select
-	li $v0, 4
-	la $a0, position_selection_prompt
-	syscall
-	
-	# Displays game board
-	jal displayGameBoard
-	jal getPosition
-	
 	jr $ra
 	
 printResults:

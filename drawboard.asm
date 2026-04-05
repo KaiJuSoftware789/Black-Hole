@@ -1,6 +1,9 @@
-# File to display the board to the player
+# File to display and handle board for the game
 
 .data
+
+positionInvalidMsg: .asciiz "Position is invalid. Please try again.\n"
+
 horizontalborder: .asciiz "+-----------+\n"
 verticalpad: .asciiz "|"
 newline: .asciiz "\n"
@@ -34,6 +37,30 @@ board: .byte
 
 .text
 .globl displayGameBoard
+
+# Gets position that player wants to put their number in
+getPosition:
+
+	li $v0, 12
+	syscall
+	
+	sb $v0, position
+	
+	jr $ra
+	
+# Checks if position is valid
+checkPositionValid:
+
+	# If position is not "*" which is a free space, position is not valid
+	
+	# Position invalid msg
+
+printInvalidMessage:
+	
+	li $v0, 4
+	la $a0, positionInvalidMsg
+	syscall
+	jr $ra
 
 
 # Updates the screen after modifications
@@ -360,7 +387,6 @@ displayGameBoard:
 	la $a0, horizontalborder
 	syscall
 	
-	li $v0, 10
-	syscall      
+	jr $ra   
 
 
