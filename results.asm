@@ -1,5 +1,5 @@
-.include "drawboard.asm"
 
+.data
 win_announcement: .asciiz "You claim victory!!!!! :)"
 lose_announcement: .asciiz "You have lost! :("
 tie_announcement: .asciiz "It's a tie! :o"
@@ -8,7 +8,9 @@ tie_announcement: .asciiz "It's a tie! :o"
 .globl printResults
 
 printResults:
-
+	# Save return address on stack
+	addi $sp, $sp, -4
+    	sw   $ra, 0($sp)
 findBlackHole:
 	# Load board address
 	la $t0, board
@@ -82,7 +84,7 @@ calcNeighbors:
     	addi $t2, $t2, 2
     	jal addIfOwned
 
-belowAndRightNeigbors:
+belowAndRightNeighbors:
     	# Goes through all possible below neighbors
     
     	# Skips if bottom row
@@ -169,6 +171,10 @@ addToPlayer:
     	# Loads character from board address
     	lb $t4, 0($t3)
     	
+    	# Checks if it is special character (#) for 10
+    	li $t6, '#'
+    	beq $t4, $t6, playerTen
+    	
     	# Converts the ASCII back to integer
     	addi $t4, $t4, -48
     	
@@ -177,6 +183,21 @@ addToPlayer:
     	
     	# Adds integer from game board to the player sum
     	add $t5, $t5, $t4
+    	sb $t5, playerSum
+    	jr $ra
+    	
+playerTen:
+	li $t4, 10
+	
+addPlayerSum:
+
+	# Loads address of playerSum into $t5
+	lb $t5, playerSum
+	
+    	# Adds integer from board address to player sum
+	add $t5, $t5, $t4
+	
+    	# Stores sum back into playerSum	
     	sb $t5, playerSum
     	jr $ra
 
@@ -191,6 +212,10 @@ addToComp:
     	# Loads character from board address
     	lb $t4, 0($t3)
     	
+    	# Checks if it is special character (#) for 10
+    	li $t6, '#'
+    	beq $t4, $t6, compTen
+    	
     	# Converts the ASCII back to integer
     	addi $t4, $t4, -48
     	
@@ -201,5 +226,55 @@ addToComp:
     	add $t5, $t5, $t4
     	sb $t5, computerSum
     	jr $ra
+    	
+compTen:
+	li $t4, 10
+    	
+addCompSum:
+	
+	# Loads address of computerSum into $t5
+    	lb $t5, computerSum
+    	
+    	# Adds integer from board address to computer sum
+    	add $t5, $t5, $t4
+    	
+    	# Stores sum back into computerSum
+    	sb $t5, computerSum
+    	jr $ra
 
+compareResults:
+
+	# Loads player and computer sums
+    	lb $t0, playerSum
+    	lb $t1, computerSum
+    
+    	# Determines which if player won or computer won
+    	blt $t0, $t1, playerWon
+    	bgt $t0, $t1, computerWon
+    
+    	# If there is a tie, announces tie
+    	li $v0, 4
+    	la $a0, tie_announcement
+    	syscall
+    	j endResults
+    	
+    	
+ playerWon:
+  	li $v0, 4
+    	la $a0, win_announcement
+    	syscall
+    	j endResults
+ 
+ computerWon:
+ 	li $v0, 4
+    	la $a0, lose_announcement
+    	syscall
+    	j endResults    
+    		
+ endResults:
+ 
+ 	# Return back to main
+    	lw   $ra, 0($sp)
+    	addi $sp, $sp, 4
+    	jr $ra
 

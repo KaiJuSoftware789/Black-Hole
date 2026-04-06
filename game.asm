@@ -73,16 +73,22 @@ gameLoop:
 	la $a0, position_selection_prompt
 	syscall
 	
-	# Takes in position for player
+	# Takes in position for player, checks validity, and places position on game baord
 	jal getPosition
 	jal checkPositionValid
 	jal placePosition
-	jal computerTurn
+	
+	# Displays changed gameboard
 	jal displayGameBoard
 	
+	# Checks if player has reach 10 moves
 	lb $t0, playerHighestNumber
-    	li $t1, 10
+	li $t1, 10
    	beq $t0, $t1, gameComplete
+	
+	# Performs computer's turn and displays it
+	jal computerTurn
+    	jal displayGameBoard
 	
 	# Test message
 	# li $v0, 4
@@ -99,6 +105,7 @@ gameLoop:
 	
 # Restores original address to return to main after game is complete
 gameComplete:
+	jal displayGameBoard
 	lw   $ra, 0($sp)
     	addi $sp, $sp, 4
     	jr   $ra	
