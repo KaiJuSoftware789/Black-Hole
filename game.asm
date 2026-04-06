@@ -4,26 +4,23 @@
 
 .include "drawboard.asm"
 .include "computer.asm"
+.include "results.asm"
 
 .data
 
 # Announcements to player
 game_msg: .asciiz "You have gone to the game portion of the program\n\n"
-win_announcement: .asciiz "You claim victory!!!!! :)"
-lose_announcement: .asciiz "You have lost! :("
+
 
 # Prompt to player
 position_selection_prompt: .asciiz "Your turn to move.\n"
 
 # Test message
-test_msg: .asciiz "Code has been passed.\n"
+# test_msg: .asciiz "Code has been passed.\n"
 
 
 
-playerHighestNumber: .byte 0
-playerSum: .byte 0
-compHighestNumber: .byte 0
-computerSum: .byte 0
+
 
 
 .text
@@ -44,7 +41,11 @@ game:
 	# Displays game board
 	jal displayGameBoard
 	
+	# Goes into game loop
 	jal gameLoop
+	
+	# After game is completed, prints results
+	jal printResults
 	
 	
 	
@@ -64,6 +65,8 @@ game:
 	
 gameLoop:
 	
+	addi $sp, $sp, -4
+	sw   $ra, 0($sp)
 	
 	# Tells user it is their turn to select
 	li $v0, 4
@@ -73,13 +76,29 @@ gameLoop:
 	# Takes in position for player
 	jal getPosition
 	jal checkPositionValid
+	jal placePosition
+	jal computerTurn
+	jal displayGameBoard
 	
-	li $v0, 4
-	la $a0, test_msg
-	syscall
+	lb $t0, playerHighestNumber
+    	li $t1, 10
+   	beq $t0, $t1, gameComplete
 	
-	jal placePosition 
-
-	# Computer will select a random position and fill that in with the next number to use on that position
-
+	# Test message
+	# li $v0, 4
+	# la $a0, test_msg
+	# syscall
 	
+	# li $v0, 10
+	# syscall
+	
+	# Cleans return address to free up space in the stack
+	lw   $ra, 0($sp)
+    	addi $sp, $sp, 4
+	j gameLoop
+	
+# Restores original address to return to main after game is complete
+gameComplete:
+	lw   $ra, 0($sp)
+    	addi $sp, $sp, 4
+    	jr   $ra	

@@ -9,14 +9,24 @@ verticalpad: .asciiz "|"
 newline: .asciiz "\n"
 space: .asciiz " "
 
+# Gaps for displaying game board
 gap1: .asciiz "     "
 gap2: .asciiz "    "
 gap3: .asciiz "   "
 gap4: .asciiz "  "
 gap5: .asciiz " "
 
-position: .byte -1
+# Game data
+# owner data stores owner type based off index of board address
+# 0 = empty, 1 = player, 2 = computer
+owner: .byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+position: .word -1
+playerHighestNumber: .byte 0
+playerSum: .byte 0
+compHighestNumber: .byte 0
+computerSum: .byte 0
 
+# Board data
 positionBoard: .byte
 1,
 2, 3,
@@ -24,9 +34,7 @@ positionBoard: .byte
 7, 8, 9, 10,
 11, 12, 13, 14, 15,
 16, 17, 18, 19, 20, 21
-
-                                    
-# Asterisks will be used to display available spots to fill with numbers     
+   
 board: .byte 
 
 '*',
@@ -45,7 +53,7 @@ getPosition:
 	li $v0, 5
 	syscall
 	
-	sb $v0, position
+	sw $v0, position
 	
 	li $v0, 4
 	la $a0, newline
@@ -57,7 +65,7 @@ getPosition:
 checkPositionValid:
 
 	# Load given position and the board
-	lb $t0, position
+	lw $t0, position
 	la $t1, board
 	
 	# Checks if position is out of bounds
@@ -76,24 +84,74 @@ checkPositionValid:
 	# If position is "*" which is a free space, position is valid
 	li $t3, '*'
 	beq $t2, $t3, positionValid
-	
-	# Else, position invalid message is shown
 	j positionInvalid
-	jal getPosition
-	j checkPositionValid 
+	
 	
 positionValid:
 	jr $ra
 	
 placePosition:
+	# Load position chosen
+	lw $t0, position
+	
+	# Convert input to index
+	addi $t0, $t0, -1
+	
+	# Point position to position on board
+	la $t1, board
+	add $t1, $t1, $t0
+	
+	# Stores owner type into respective index from board into owner array
+	la $t3, owner
+    	add $t3, $t3, $t0 
+    	li $t4, 1 
+    	sb $t4, 0($t3)     
+	
+	# Get the next number to place (increment playerHighestNumber)
+    	lb $t2, playerHighestNumber
+    	addi $t2, $t2, 1
+    	sb $t2, playerHighestNumber
+    	
+    	# Check if number is 10. If so, use special character
+	li $t3, 10
+	beq $t2, $t3, placeTen
+    	
+    	# Convert integer to ASCII before storing number into board
+    	addi $t2, $t2, 48
+    	j storeNumber
+    	
+    	# Puts player's current number to position chosen
+    	sb $t2, 0($t1)
+    	
+    	jr $ra
+    	
+placeTen:
+li $t2, '#'
 
+storeNumber:
+sb $t2, 0($t1)
+jr $ra
+	
 positionInvalid:
 	
+	# Print position invalid message
 	li $v0, 4
 	la $a0, positionInvalidMsg
 	syscall
-	jr $ra
-
+	
+	# Saves return address on stack
+	addi $sp, $sp, -4
+	sw   $ra, 0($sp)
+	
+	jal getPosition
+	
+	
+	# Restores address before jumping
+	lw   $ra, 0($sp)
+   	addi $sp, $sp, 4
+   	
+   	
+	j checkPositionValid
 
 # Updates the screen after modifications
 displayGameBoard:
