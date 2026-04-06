@@ -105,7 +105,11 @@ gameLoop:
 	
 # Restores original address to return to main after game is complete
 gameComplete:
+	addi $sp, $sp, -4
+	sw   $ra, 0($sp)
 	jal displayGameBoard
 	lw   $ra, 0($sp)
+    	addi $sp, $sp, 4
+    	lw   $ra, 0($sp)
     	addi $sp, $sp, 4
     	jr   $ra	

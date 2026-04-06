@@ -116,6 +116,7 @@ rightNeighbors:
     	beq $v0, 1, compareResults
 	addi $t2, $s0, 1
     	jal addIfOwned
+    	j compareResults
     
 # Checks if neighbor index is at left edge 
 isLeftEdge:
