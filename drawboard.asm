@@ -4,7 +4,9 @@
 
 positionInvalidMsg: .asciiz "Position is invalid. Please try again.\n"
 
-horizontalborder: .asciiz "+-----------+\n"
+horizontalborder: .asciiz "+-----------+"
+horizontalrefborder: .asciiz "+-----------------+"
+referencegap: "\t"
 verticalpad: .asciiz "|"
 newline: .asciiz "\n"
 space: .asciiz " "
@@ -15,6 +17,15 @@ gap2: .asciiz "    "
 gap3: .asciiz "   "
 gap4: .asciiz "  "
 gap5: .asciiz " "
+
+# Gaps for displaying reference board
+pgap1: .asciiz "        "
+pgap2: .asciiz "       "
+pgap3: .asciiz "      "
+pgap4: .asciiz "     "
+pgap4.5: .asciiz "    "   
+pgap5: .asciiz "  "
+pgap5.5: .asciiz " "
 
 # Game data
 # owner data stores owner type based off index of board address
@@ -152,6 +163,40 @@ positionInvalid:
    	
    	
 	j checkPositionValid
+	
+resetBoard: 
+	# Resets player's and computer's data
+	sb $zero, playerHighestNumber
+    	sb $zero, compHighestNumber
+    	sb $zero, playerSum
+    	sb $zero, computerSum 
+    	
+    	# Loads values to reset board back to original state
+    	la $t0, board
+    	li $t1, 21
+    	li $t2, '*'
+    	
+resetLoop:
+	
+	# Iterates and goes through board array to reset it
+	sb $t2, 0($t0)
+    	addi $t0, $t0, 1
+    	addi $t1, $t1, -1
+    	bgt $t1, 0, resetLoop
+    	
+    	# Loads address of owner array after resetting board loop is done
+    	la $t0, owner
+    	li $t1, 21 
+    	
+resetOwner:
+	
+	# Goes through owner array and resets elements back to 0
+	sb $zero, 0($t0)
+    	addi $t0, $t0, 1
+    	addi $t1, $t1, -1
+    	bgt $t1, 0, resetOwner
+    	
+    	jr $ra
 
 # Updates the screen after modifications
 displayGameBoard:
@@ -161,6 +206,21 @@ displayGameBoard:
 		# Borders
 		li $v0, 4
 		la $a0, horizontalborder
+		syscall
+		
+		# Reference gap
+		li $v0, 4
+		la $a0, referencegap
+		syscall
+		
+		# Borders
+		li $v0, 4
+		la $a0, horizontalrefborder
+		syscall
+		
+		# Newline
+		li $v0, 4
+		la $a0, newline
 		syscall
 	
 		# Vertical pad
@@ -187,10 +247,44 @@ displayGameBoard:
 		li $v0, 4
 		la $a0, verticalpad
 		syscall
+		
+		# Reference gap
+		li $v0, 4
+		la $a0, referencegap
+		syscall
+		
+		# Vertical pad
+		li $v0, 4
+		la $a0, verticalpad
+		syscall
+		
+		# Gap to center row
+		li $v0, 4
+		la $a0, pgap1
+		syscall
+		
+		
+		# Character in row 1 of position board
+		lb $a0, positionBoard
+		li $v0, 1
+		syscall
+		
+		
+		# Gap to center row
+		li $v0, 4
+		la $a0, pgap1
+		syscall
+		
+		# Vertical pad
+		li $v0, 4
+		la $a0, verticalpad
+		syscall
 	
 		li $v0, 4
 		la $a0, newline
 		syscall
+		
+		
 	
 	# End of Row 1
 	
@@ -228,8 +322,46 @@ displayGameBoard:
 		li $v0, 4
 		la $a0, verticalpad
 		syscall
+		
+		# Reference gap
+		li $v0, 4
+		la $a0, referencegap
+		syscall
+		
+		# Vertical pad
+		li $v0, 4
+		la $a0, verticalpad
+		syscall
 	
+		# Gap to center row
+		li $v0, 4
+		la $a0, pgap2
+		syscall
+		
+		
+		# Characters in row 2 of position board
+		lb $a0, positionBoard+1
+		li $v0, 1
+		syscall
 	
+		li $v0, 4
+		la $a0, space
+		syscall
+	
+		lb $a0, positionBoard+2
+		li $v0, 1
+		syscall
+		
+		# Gap to center row
+		li $v0, 4
+		la $a0, pgap2
+		syscall
+	
+		# Vertical pad
+		li $v0, 4
+		la $a0, verticalpad
+		syscall
+		
 		li $v0, 4
 		la $a0, newline
 		syscall
@@ -278,7 +410,54 @@ displayGameBoard:
 		li $v0, 4
 		la $a0, verticalpad
 		syscall
+		
+		# Reference gap
+		li $v0, 4
+		la $a0, referencegap
+		syscall
+		
+		
+		# Vertical pad
+		li $v0, 4
+		la $a0, verticalpad
+		syscall
 	
+		# Gap to center row
+		li $v0, 4
+		la $a0, pgap3
+		syscall
+		
+		# Characters in row 3 of board
+		lb $a0, positionBoard+3
+		li $v0, 1
+		syscall
+	
+		li $v0, 4
+		la $a0, space
+		syscall
+	
+		lb $a0, positionBoard+4
+		li $v0, 1
+		syscall
+	
+		li $v0, 4
+		la $a0, space
+		syscall
+	
+		lb $a0, positionBoard+5
+		li $v0, 1
+		syscall
+	
+		# Gap to center row
+		li $v0, 4
+		la $a0, pgap3
+		syscall
+	
+		# Vertical pad
+		li $v0, 4
+		la $a0, verticalpad
+		syscall
+		
 		li $v0, 4
 		la $a0, newline
 		syscall
@@ -330,6 +509,63 @@ displayGameBoard:
 		# Gap to center row
 		li $v0, 4
 		la $a0, gap4
+		syscall
+		
+		# Vertical pad
+		li $v0, 4
+		la $a0, verticalpad
+		syscall
+		
+		
+		# Reference gap
+		li $v0, 4
+		la $a0, referencegap
+		syscall
+		
+		
+		# Vertical pad
+		li $v0, 4
+		la $a0, verticalpad
+		syscall
+		
+		# Gap to center row
+		li $v0, 4
+		la $a0, pgap4
+		syscall
+		
+		# Characters in row 4 of board		
+		lb $a0, positionBoard+6
+		li $v0, 1
+		syscall
+	
+		li $v0, 4
+		la $a0, space
+		syscall
+	
+		lb $a0, positionBoard+7
+		li $v0, 1
+		syscall
+	
+		li $v0, 4
+		la $a0, space
+		syscall
+	
+		lb $a0, positionBoard+8
+		li $v0, 1
+		syscall
+		
+		li $v0, 4
+		la $a0, space
+		syscall
+	
+		lb $a0, positionBoard+9
+		li $v0, 1
+		syscall
+		
+		
+		# Gap to center row
+		li $v0, 4
+		la $a0, pgap4.5
 		syscall
 		
 		# Vertical pad
@@ -402,6 +638,68 @@ displayGameBoard:
 		li $v0, 4
 		la $a0, verticalpad
 		syscall
+		
+		# Reference gap
+		li $v0, 4
+		la $a0, referencegap
+		syscall
+		
+		# Vertical pad
+		li $v0, 4
+		la $a0, verticalpad
+		syscall
+		
+		# Gap to center row
+		li $v0, 4
+		la $a0, pgap5
+		syscall
+		
+		# Characters in row 5 of board
+		lb $a0, positionBoard+10
+		li $v0, 1
+		syscall
+	
+		li $v0, 4
+		la $a0, space
+		syscall
+	
+		lb $a0, positionBoard+11
+		li $v0, 1
+		syscall
+	
+		li $v0, 4
+		la $a0, space
+		syscall
+
+		lb $a0, positionBoard+12
+		li $v0, 1
+		syscall
+		
+		li $v0, 4
+		la $a0, space
+		syscall
+	
+		lb $a0, positionBoard+13
+		li $v0, 1
+		syscall
+		
+		li $v0, 4
+		la $a0, space
+		syscall
+	
+		lb $a0, positionBoard+14
+		li $v0, 1
+		syscall
+		
+		# Gap to center row
+		li $v0, 4
+		la $a0, pgap5.5
+		syscall
+		
+		# Vertical pad
+		li $v0, 4
+		la $a0, verticalpad
+		syscall
 	
 		li $v0, 4
 		la $a0, newline
@@ -465,18 +763,94 @@ displayGameBoard:
 		li $v0, 4
 		la $a0, verticalpad
 		syscall
+		
+		# Vertical pad
+		li $v0, 4
+		la $a0, referencegap
+		syscall
+		
+		# Vertical pad
+		li $v0, 4
+		la $a0, verticalpad
+		syscall
+		
+		# Characters in row 6 of board
+		lb $a0, positionBoard+15
+		li $v0, 1
+		syscall
 	
+		li $v0, 4
+		la $a0, space
+		syscall
+	
+		lb $a0, positionBoard+16
+		li $v0, 1
+		syscall
+	
+		li $v0, 4
+		la $a0, space
+		syscall
+	
+		lb $a0, positionBoard+17
+		li $v0, 1
+		syscall
+		
+		li $v0, 4
+		la $a0, space
+		syscall
+	
+		lb $a0, positionBoard+18
+		li $v0, 1
+		syscall
+		
+		li $v0, 4
+		la $a0, space
+		syscall
+	
+		lb $a0, positionBoard+19
+		li $v0, 1
+		syscall
+		
+		li $v0, 4
+		la $a0, space
+		syscall
+	
+		lb $a0, positionBoard+20
+		li $v0, 1
+		syscall
+		
+		# Vertical pad
+		li $v0, 4
+		la $a0, verticalpad
+		syscall
+		
+		# End of row 6
+		
 		li $v0, 4
 		la $a0, newline
 		syscall
 	
-	# End of row 6
+		li $v0, 4
+		la $a0, horizontalborder
+		syscall
+		
+		li $v0, 4
+		la $a0, referencegap
+		syscall
+		
+		li $v0, 4
+		la $a0, horizontalrefborder
+		syscall
+		
+		li $v0, 4
+		la $a0, newline
+		syscall
+		
+		
+		
+		jr $ra 
 	
-	# Borders
-	li $v0, 4
-	la $a0, horizontalborder
-	syscall
-	
-	jr $ra   
+		
+
 
 

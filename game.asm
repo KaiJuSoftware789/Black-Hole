@@ -32,6 +32,8 @@ game:
 	# Save original return address to stack before doing other jal calls
 	addi $sp, $sp, -4
     	sw   $ra, 0($sp)
+    	
+    	jal resetBoard
 
 	# Player starts game and board displays.
 	li $v0, 4
@@ -82,14 +84,31 @@ gameLoop:
 	jal displayGameBoard
 	
 	# Checks if player has reach 10 moves
-	lb $t0, playerHighestNumber
-	li $t1, 10
-   	beq $t0, $t1, gameComplete
+	# lb $t0, playerHighestNumber
+	# li $t1, 10
+   	# beq $t0, $t1, gameComplete
 	
 	# Performs computer's turn and displays it
 	jal computerTurn
     	jal displayGameBoard
-	
+    	
+    	
+    	# Checks if both players reached 10
+    	lb $t0, playerHighestNumber
+    	lb $t1, compHighestNumber
+    	bne $t0, $t1, continueGame
+    	li $t2, 10
+    	beq $t0, $t2, gameComplete
+    	
+    	# If player's highest number equals 10, goes gameCome
+	beq $t0, $t2, gameComplete
+    	
+    	# If both highest numbers not equal, game loops again
+    	bne $t0, $t1, gameLoop
+    	
+    	# If player's highest number does not equal 10, game loops again
+	li $t2, 10
+	bne $t0, $t2, gameLoop
 	# Test message
 	# li $v0, 4
 	# la $a0, test_msg
@@ -102,14 +121,17 @@ gameLoop:
 	lw   $ra, 0($sp)
     	addi $sp, $sp, 4
 	j gameLoop
-	
+
+
+
+# Cleans stack for next iteration in the loop
+continueGame:
+    	lw   $ra, 0($sp)
+   	addi $sp, $sp, 4
+    	j gameLoop	
+
 # Restores original address to return to main after game is complete
 gameComplete:
-	addi $sp, $sp, -4
-	sw   $ra, 0($sp)
-	jal displayGameBoard
 	lw   $ra, 0($sp)
-    	addi $sp, $sp, 4
-    	lw   $ra, 0($sp)
-    	addi $sp, $sp, 4
-    	jr   $ra	
+	addi $sp, $sp, 4
+    	jr   $ra

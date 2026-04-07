@@ -67,15 +67,16 @@ pickRandom:
     	# convert integer to ASCII and store to board
     	addi $t2, $t2, 48 
 	j storeCompNumber
-	
-	
-    	addi $t2, $t2, 48
-    	j storeCompNumber
 
 placeCompTen:
 	li $t2, '#'
 
 storeCompNumber:
+
+	# temp debug
+    	# li $v0, 11
+    	# move $a0, $t2
+    	# syscall
 
 	# Stores character into board address
 	sb $t2, 0($t1)

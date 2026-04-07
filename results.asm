@@ -1,8 +1,10 @@
 
 .data
-win_announcement: .asciiz "You claim victory!!!!! :)"
-lose_announcement: .asciiz "You have lost! :("
-tie_announcement: .asciiz "It's a tie! :o"
+win_announcement: .asciiz "You claim victory!!!!! :)\n"
+lose_announcement: .asciiz "You have lost! :(\n"
+tie_announcement: .asciiz "It's a tie! :o\n"
+player_sum_msg: .asciiz "Your sum: "
+comp_sum_msg: .asciiz "Computer's sum: "
 
 .text
 .globl printResults
@@ -100,18 +102,18 @@ belowAndRightNeighbors:
     	jal addIfOwned
 
 leftNeighbors:
-    # Goes through all possible left neighbors
+    	# Goes through all possible left neighbors
     
-    # Skips if there is no left edge
+    	# Skips if there is no left edge
     	jal isLeftEdge
     	beq $v0, 1, rightNeighbors
     	addi $t2, $s0, -1
     	jal addIfOwned
 
 rightNeighbors:
-    # Goes through all the possible right neigbors
+    	# Goes through all the possible right neigbors
     
-    # Skips if there are no right neighbors
+    	# Skips if there are no right neighbors
     	jal isRightEdge
     	beq $v0, 1, compareResults
 	addi $t2, $s0, 1
@@ -213,6 +215,12 @@ addToComp:
     	# Loads character from board address
     	lb $t4, 0($t3)
     	
+    	
+    	# li $v0, 1
+    	# move $a0, $t4
+    	# syscall
+    	
+    	
     	# Checks if it is special character (#) for 10
     	li $t6, '#'
     	beq $t4, $t6, compTen
@@ -257,20 +265,53 @@ compareResults:
     	li $v0, 4
     	la $a0, tie_announcement
     	syscall
-    	j endResults
+    	j printSums
     	
     	
  playerWon:
   	li $v0, 4
     	la $a0, win_announcement
     	syscall
+    	j printSums
     	j endResults
  
- computerWon:
- 	li $v0, 4
+computerWon:
+    	li $v0, 4
     	la $a0, lose_announcement
     	syscall
-    	j endResults    
+    	j printSums
+    	j printSums
+    	
+ printSums:
+ 
+ 	# Prints player's sum
+    	li $v0, 4
+    	la $a0, player_sum_msg
+    	syscall
+    	lb $a0, playerSum
+    	li $v0, 1
+    	syscall
+    	li $v0, 4
+    	la $a0, newline
+    	syscall
+    
+    	# Print's computer's sum
+    	li $v0, 4
+    	la $a0, comp_sum_msg
+    	syscall
+    	lb $a0, computerSum
+    	li $v0, 1
+    	syscall	
+    	li $v0, 4
+    	la $a0, newline
+    	syscall
+    	
+    	li $v0, 4
+    	la $a0, newline
+    	syscall
+
+    
+    	j endResults
     		
  endResults:
  
