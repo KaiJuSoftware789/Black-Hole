@@ -168,7 +168,7 @@ addToPlayer:
 	# Loads base address of game board
     	la $t3, board
     	
-    	# Moves to specific neighbor index on the game baord
+    	# Moves to specific neighbor index on the game board
     	add $t3, $t3, $t2
     	
     	# Loads character from board address
