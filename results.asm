@@ -1,7 +1,7 @@
 
 .data
 win_announcement: .asciiz "You claim victory!!!!! :)\n"
-lose_announcement: .asciiz "You have lost! :(\n"
+lose_announcement: .asciiz "Computer Won!\nYou lose! :(\n"
 tie_announcement: .asciiz "It's a tie! :o\n"
 player_sum_msg: .asciiz "Your sum: "
 comp_sum_msg: .asciiz "Computer's sum: "

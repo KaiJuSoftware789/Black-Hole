@@ -8,18 +8,9 @@
 
 .data
 
-# Announcements to player
-game_msg: .asciiz "You have gone to the game portion of the program\n\n"
-
 
 # Prompt to player
-position_selection_prompt: .asciiz "Your turn to move.\n"
-
-# Test message
-# test_msg: .asciiz "Code has been passed.\n"
-
-
-
+position_selection_prompt: .asciiz "Your turn to choose position.\n"
 
 
 
@@ -36,9 +27,6 @@ game:
     	jal resetBoard
 
 	# Player starts game and board displays.
-	li $v0, 4
-	la $a0, game_msg
-	syscall
 
 	# Displays game board
 	jal displayGameBoard
@@ -49,14 +37,6 @@ game:
 	# After game is completed, prints results
 	jal printResults
 	
-	
-	
-		
-	
-	# Once both the player and computer reach number 10 on both their numbers used, nearest numbers respective
-	# to each player are tallied up to their own sums
-
-	# Player or computer with the least sum is crowned victor of the  game.
 	
 	
 	# Restore orignal return address

@@ -1,7 +1,7 @@
 # File to handle computer game choices
 
 .data
-comp_msg: .asciiz "Computer making move. \n"
+comp_msg: .asciiz "Computer chose it's position. \n"
 
 .text
 .globl computerTurn
